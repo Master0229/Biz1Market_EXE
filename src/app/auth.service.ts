@@ -636,18 +636,17 @@ export class AuthService {
     return this.http.post(this.server_ip + ':8081/saveStockBatch', stockBatches)
   }
 
-
   GetReceipts(Storeid, fromdate, todate, invoice) {
     return this.http.get(
       this.base_url1 +
-      'Receipt/GetReceipt?Storeid=' +
-      Storeid +
-      '&fromdate=' +
-      fromdate +
-      '&todate=' +
-      todate +
-      '&InvoiceNo=' +
-      invoice
+        'Receipt/Gettestdata?Storeid=' +
+        Storeid +
+        '&fromdate=' +
+        fromdate +
+        '&todate=' +
+        todate +
+        '&InvoiceNo=' +
+        invoice,
     )
   }
 
@@ -714,14 +713,11 @@ export class AuthService {
     return this.http.post(this.dburl + 'addtransaction', transaction)
   }
   // StorePaymentType
-  getstorepaymentType(storeid){
+  getstorepaymentType(storeid) {
     return this.http.get(this.base_url1 + 'PaymentType/getstorepaymenttype?StoreId=26')
   }
 
   // getUsersale(companyId){
   //   return this.http.get(this.base_url1 + 'Users/GetUsers?CompanyId=' + companyId)
   // }
-
 }
-
-

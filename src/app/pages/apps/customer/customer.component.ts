@@ -26,11 +26,6 @@ export class CustomerComponent implements OnInit {
   filteredcustomer = null
   deleteId
   constructor(private Auth: AuthService, private modalService: NgbModal) {
-    // var userinfo = localStorage.getItem("userinfo");
-    // var userinfoObj = JSON.parse(userinfo);
-    // console.log(userinfoObj)
-    // this.CompanyId = userinfoObj[0].CompanyId;
-    // var logInfo = JSON.parse(localStorage.getItem("logInfo"));
     this.CompanyId = 1
     this.StoreId = 26
   }
@@ -50,17 +45,16 @@ export class CustomerComponent implements OnInit {
     })
   }
 
-  setcustomerdetail(Id) {
-    this.filteredcustomer = Object.assign({}, this.Customer.filter(x => x.Id == Id)[0])
+  setcustomerdetail(id) {
+    this.filteredcustomer = Object.assign({}, this.Customer.filter(x => x.id == id)[0])
   }
 
-  savecustomer(input) {
+  savecustomer(Input) {
     this.filteredcustomer.ModifiedDate = moment()
     var data = { data: JSON.stringify(this.filteredcustomer) }
-    this.Auth.UpdateCustomer(data).subscribe(data => {
+    this.Auth.UpdateCustomer(this.filteredcustomer).subscribe(data => {
       var response: any = data
       if (response.status == 0) {
-        // console.log(dangertoast(response.msg));
         this.getCustomer()
       } else {
         this.getCustomer()
