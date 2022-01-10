@@ -15,6 +15,7 @@ export class OrderModule {
   changeditems: Array<string>
   createdtimestamp: number
   additionalchargearray: Array<AdditionalCharge> = []
+  AdditionalCharge: Array<AdditionalChargeModule>
   OrderTypeId: number
   isordersaved: boolean
   OrderStatusId: number
@@ -38,6 +39,7 @@ export class OrderModule {
   UserId: number
   // DiningTableId: number;
   // WaiterId: number;
+  subtotal: number
   OrderedDateTime: string
   OrderedDate: string
   DeliveryDateTime: string
@@ -80,6 +82,7 @@ export class OrderModule {
   TaxAmount: number
   CustomerId: number
   CustomerDetails: CustomerModule
+  OrderItemModule: any
   constructor(ordertype) {
     this.Items = []
     this.Updated = false
@@ -90,6 +93,7 @@ export class OrderModule {
     this.AggregatorOrderId = ''
     this.UPOrderId = ''
     this.StoreId = 0
+    this.subtotal = 0
     this.changeditems = []
     this.StorePaymentTypeId = 0
     // this.CustomerId = 0;
@@ -152,7 +156,7 @@ export class OrderModule {
   }
 
   addproduct(product) {
-    this.Items.push(new OrderItemModule(product))
+    this.Items.push(new OrderItemModule(product, ''))
     this.setbillamount()
   }
   setbillamount() {
@@ -257,6 +261,8 @@ export class OrderItemModule {
   Message: string
   TotalAmount: number
   Extra: number
+  showname: SafeHtml
+  baseprice: number
   // CategoryId: number;
   OptionJson: string
   ComplementryQty: number
@@ -297,8 +303,9 @@ export class OrderItemModule {
   stockBatchId: number
   _id: string
   Quantity: number
-  constructor(product) {
+  constructor(product, showname) {
     console.log(product)
+    this.showname = showname
     this.Id = 0
     this._id = product._id
     this.Updated = false
@@ -350,6 +357,15 @@ export class OrderItemModule {
     this.Tax4 = 0
     this.IsInclusive = product.isInclusive == 'true' || product.isInclusive == true
   }
+}
+export class AdditionalChargeModule {
+  ChargeType: number
+  ChargeValue: number
+  ChargeAmount: number
+  Description: string
+  Id: number
+  TaxGroupId: number
+  constructor(obj: any) {}
 }
 export class OrderItemDetailModule {
   OrderItemDetailId: number

@@ -143,14 +143,11 @@
         <div *ngIf="order&&order.Items.length" class="btn-group ml-6 mb-2">
             <button *ngFor="let spt of storePaymentTypes" type="button"
                 [class.active]="order.StorePaymentTypeId == spt.id"
-                (click)="order.StorePaymentTypeId = spt.id;order.PaidAmount = order.BillAmount" 
-                class="btn btn-squared">
+                (click)="order.StorePaymentTypeId = spt.id;order.PaidAmount = order.BillAmount" class="btn btn-squared">
                 {{spt.name}}
             </button>
-            <button type="button"
-                [class.active]="order.StorePaymentTypeId == 0"
-                (click)="order.StorePaymentTypeId = 0;order.PaidAmount = 0" 
-                class="btn btn-squared">
+            <button type="button" [class.active]="order.StorePaymentTypeId == 0"
+                (click)="order.StorePaymentTypeId = 0;order.PaidAmount = 0" class="btn btn-squared">
                 Unpaid
             </button>
             <!-- <button type="button" [class.active]="paymenttypeid == 2" (click)="paymenttypeid = 2"
@@ -192,7 +189,7 @@
             <div>
                 Grand Total: <span class="font-weight-bold font-size-24">&#8377; {{order.BillAmount}}</span>
             </div>
-            <a href="javascript: void(0);" class="btn btn-outline-success mr-3 mt-3">
+            <a href="javascript: void(0);" class="btn btn-outline-success mr-3 mt-3" (click)=" printreceipt()">
                 Print
             </a>
             <a href="javascript: void(0);" class="btn btn-success mt-3" (click)="saveOrder()">

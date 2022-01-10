@@ -66,7 +66,6 @@ export class AuthService {
       catchError(err => {
         console.log('error caught in service')
         console.error(err)
-
         //Handle the error here
 
         return throwError(err) //Rethrow it back to component
@@ -649,7 +648,6 @@ export class AuthService {
         invoice,
     )
   }
-
   getdbdata(dbnames) {
     return this.http.post(this.dburl + 'getdbdata', dbnames)
   }
@@ -715,6 +713,9 @@ export class AuthService {
   // StorePaymentType
   getstorepaymentType(storeid) {
     return this.http.get(this.base_url1 + 'PaymentType/getstorepaymenttype?StoreId=26')
+  }
+  gettransaction(OrderId) {
+    return this.http.get(this.base_url1 + 'Receipt/getByOrderId?OrderId=' + OrderId)
   }
 
   // getUsersale(companyId){

@@ -96,7 +96,7 @@ export class CustomerComponent implements OnInit {
       this.Customer = this.masterdata.filter(
         x =>
           x.Name?.toLowerCase().includes(this.term.toLowerCase()) ||
-          x.PhoneNo?.toLowerCase().includes(this.term.toLowerCase()),
+          x.invoiceNo?.toLowerCase().includes(this.term.toLowerCase()),
       )
       // console.log(this.masterdata[0])
       // console.log(this.masterdata[0].Name.toLowerCase())
