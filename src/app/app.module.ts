@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms'
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material'
 
+import { JwtInterceptor } from './services/interceptors/jwt.interceptors'
+
 import { NgProgressModule } from '@ngx-progressbar/core'
 import { NgProgressRouterModule } from '@ngx-progressbar/router'
 import { NgProgressHttpModule } from '@ngx-progressbar/http'
@@ -86,6 +88,7 @@ registerLocaleData(localeEn, 'en')
 
     // firestore settings
     { provide: SETTINGS, useValue: {} },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })

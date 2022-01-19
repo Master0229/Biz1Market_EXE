@@ -651,6 +651,9 @@ export class AuthService {
   getdbdata(dbnames) {
     return this.http.post(this.dburl + 'getdbdata', dbnames)
   }
+  updateprintersettings(setting) {
+    return this.http.post(this.dburl + 'updateprintersettings', setting)
+  }
 
   GetCustomer(CompanyId) {
     return this.http.get(this.base_url1 + 'Customer/GetIndex?CompanyId=' + CompanyId)

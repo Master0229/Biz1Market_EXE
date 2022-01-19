@@ -1,4 +1,12 @@
-import { Component, OnInit, TemplateRef, ViewChild, ElementRef, HostListener, Input } from '@angular/core'
+import {
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ElementRef,
+  HostListener,
+  Input,
+} from '@angular/core'
 import * as moment from 'moment'
 import { FormControl, Validators } from '@angular/forms'
 import { NzModalService } from 'ng-zorro-antd/modal'
@@ -9,6 +17,7 @@ import { Observable } from 'rxjs'
 import { debounceTime, map } from 'rxjs/operators'
 import { OrderItemModule, OrderModule, AdditionalCharge, Transaction } from './sale.module'
 import { SyncService } from 'src/app/services/sync/sync.service'
+import { PrintService } from 'src/app/services/print/print.service'
 
 @Component({
   selector: 'app-sale',
@@ -53,6 +62,20 @@ export class SaleComponent implements OnInit {
     '4': { name: 'Dispatched' },
     '5': { name: 'Delivered' },
   }
+  name: any
+  phoneNo: any
+  city: any
+  address: any
+  InvoiceNo: any
+  OrderedDateTime: any
+  preferences = { ShowTaxonBill: true }
+  AdditionalCharges: any
+  CGST: number = 0
+  SGST: number = 0
+  IGST: number = 0
+  Total: any
+  PaidAmount: any
+  Discount: number
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
@@ -131,13 +154,13 @@ export class SaleComponent implements OnInit {
         term === ''
           ? []
           : this.groupedProducts
-            .filter(
-              v =>
-                (v.product.toLowerCase().indexOf(term.toLowerCase()) > -1 ||
-                  v.barCode?.toLowerCase().indexOf(term.toLowerCase()) > -1) &&
-                v.quantity > 0,
-            )
-            .slice(0, 10),
+              .filter(
+                v =>
+                  (v.product.toLowerCase().indexOf(term.toLowerCase()) > -1 ||
+                    v.barCode?.toLowerCase().indexOf(term.toLowerCase()) > -1) &&
+                  v.quantity > 0,
+              )
+              .slice(0, 10),
       ),
     )
 
@@ -149,10 +172,11 @@ export class SaleComponent implements OnInit {
     private notification: NzNotificationService,
     private sync: SyncService,
     config: NgbModalConfig,
+    private printservice: PrintService,
   ) {
     config.backdrop = 'static'
     config.keyboard = false
-    this.user = JSON.parse(localStorage.getItem("user"))
+    this.user = JSON.parse(localStorage.getItem('user'))
   }
   // getErrorMessage() {
   //   if (this.quantityfc.hasError('required')) {
@@ -222,7 +246,7 @@ export class SaleComponent implements OnInit {
       orderno: this.orderkey.orderno,
       timestamp: new Date().getTime(),
     }
-    this.Auth.logorderevent(logdata).subscribe(data => { })
+    this.Auth.logorderevent(logdata).subscribe(data => {})
   }
 
   createorder(ordertypeid) {
@@ -308,7 +332,6 @@ export class SaleComponent implements OnInit {
     // }
   }
 
-
   getcustomers() {
     this.Auth.getcustomers().subscribe(data => {
       this.customers = data
@@ -374,7 +397,6 @@ export class SaleComponent implements OnInit {
       },
     )
   }
-
 
   // Get Customers
   private async getCustomer() {
@@ -638,38 +660,40 @@ export class SaleComponent implements OnInit {
     orderkey_obj.timestamp = new Date().getTime()
     this.orderkey = orderkey_obj
     localStorage.setItem('orderkey', JSON.stringify(this.orderkey))
-    this.Auth.updateorderkey(this.orderkey).subscribe(d => { })
+    this.Auth.updateorderkey(this.orderkey).subscribe(d => {})
   }
 
   temporder: OrderModule = null
   transaction: Transaction
   currentitem: OrderItemModule = null
 
-  splitpayment() {
-    this.transactionlist = []
-    this.issplitpayment = true
-    this.paymentTypes.forEach(pt => {
-      var transaction = new Transaction()
-      transaction = new Transaction()
-      transaction.Remaining = this.temporder.BillAmount - this.temporder.PaidAmount
-      transaction.Amount = 0
-      transaction.OrderId = this.temporder.OrderId
-      transaction.StoreId = this.loginfo.StoreId
-      transaction.TransDate = moment().format('YYYY-MM-DD')
-      transaction.TransDateTime = moment().format('YYYY-MM-DD HH:mm')
-      transaction.TranstypeId = 1
-      transaction.UserId = this.temporder.UserId
-      transaction.CompanyId = this.temporder.CompanyId
-      transaction.CustomerId = this.temporder.CustomerDetails.Id
-      transaction.StorePaymentTypeName = pt.Description
-      transaction.StorePaymentTypeId = pt.Id
-      this.transactionlist.push(transaction)
-    })
-  }
+  // splitpayment() {
+  //   this.transactionlist = []
+  //   this.issplitpayment = true
+  //   this.paymentTypes.forEach(pt => {
+  //     var transaction = new Transaction()
+  //     transaction = new Transaction()
+  //     transaction.Remaining = this.temporder.BillAmount - this.temporder.PaidAmount
+  //     transaction.Amount = 0
+  //     transaction.OrderId = this.temporder.OrderId
+  //     transaction.StoreId = this.loginfo.StoreId
+  //     transaction.TransDate = moment().format('YYYY-MM-DD')
+  //     transaction.TransDateTime = moment().format('YYYY-MM-DD HH:mm')
+  //     transaction.TranstypeId = 1
+  //     transaction.UserId = this.temporder.UserId
+  //     transaction.CompanyId = this.temporder.CompanyId
+  //     transaction.CustomerId = this.temporder.CustomerDetails.Id
+  //     transaction.StorePaymentTypeName = pt.Description
+  //     transaction.StorePaymentTypeId = pt.Id
+  //     this.transactionlist.push(transaction)
+  //   })
+  // }
 
+  // saveOrder
   saveOrder() {
     this.order.OrderNo = this.orderkey.orderno
     this.updateorderno()
+    this.electronPrint()
     this.order.OrderNo = this.orderkey.orderno
     this.order.BillDate = moment().format('YYYY-MM-DD HH:MM A')
     this.order.CreatedDate = moment().format('YYYY-MM-DD HH:MM A')
@@ -680,6 +704,7 @@ export class SaleComponent implements OnInit {
     this.order.ModifiedDate = moment().format('YYYY-MM-DD HH:MM A')
     this.order.InvoiceNo = this.StoreId + moment().format('YYYYMMDD') + '/' + this.order.OrderNo
     this.order.CompanyId = this.companyId
+
     this.order.StoreId = this.StoreId
     this.order.CustomerDetails.CompanyId = this.companyId
     this.order.CustomerDetails.StoreId = this.StoreId
@@ -688,18 +713,11 @@ export class SaleComponent implements OnInit {
     this.order.WipStatus = '1'
     this.order.SuppliedById = 12
     this.order.UserId = this.user.id
-    // this.order.PaidAmount = this.order.BillAmount
-    // this.order.StorePaymentTypeId = 2
-
     if (this.order.PaidAmount > 0) {
       if (this.order.StorePaymentTypeId != -1) {
         var transaction = new Transaction(this.order.PaidAmount, this.order.StorePaymentTypeId)
-        // transaction.Id = this.loginfo.CompanyId
-        // transaction.Amount = this.order.PaidAmount
         transaction.OrderId = this.order.OrderId
         transaction.CustomerId = this.order.CustomerDetails.Id
-        // transaction.PaymentTypeId = this.
-        // transaction.StorePaymentTypeId = this.order.StorePaymentTypeId
         transaction.TranstypeId = 1
         transaction.PaymentStatusId = 0
         transaction.TransDateTime = moment().format('YYYY-MM-DD HH:mm:ss')
@@ -722,10 +740,6 @@ export class SaleComponent implements OnInit {
           this.order.Transactions.push(trxn)
         })
       }
-      // this.auth.savetransactiontonedb(this.order.Transactions).subscribe(dd => { })
-      // transaction.Remaining = 0
-      // if (!this.temporder.Transactions) this.temporder.Transactions = []
-      // this.order.Transactions.push(transaction)
     }
     console.log(this.order.CustomerDetails)
     localStorage.setItem('lastorder', JSON.stringify(this.order))
@@ -734,10 +748,6 @@ export class SaleComponent implements OnInit {
       this.sync.sync()
       this.order = new OrderModule(6)
     })
-    // this.Auth.saveorderdb(this.order).subscribe(data1 => {
-    //   this.sync.sync()
-    //   this.order = new OrderModule(6)
-    // })
     this.addcustomer()
     this.notification.success('Ordered Saved successfully!', `Ordered Saved successfully.`)
   }
@@ -751,7 +761,6 @@ export class SaleComponent implements OnInit {
 
   getcustomer() {
     this.Auth.getCustomerByPhone(this.order.CustomerDetails.PhoneNo).subscribe(data => {
-      // console.log(data)
       var customer: any = data[0]
       if (customer) {
         for (var key in this.order.CustomerDetails) this.order.CustomerDetails[key] = customer[key]
@@ -759,20 +768,385 @@ export class SaleComponent implements OnInit {
       }
     })
   }
-  // StorePaymentType_JSON
+
   storePaymentTypes: any = []
   GetStorePaymentType() {
     this.Auth.getstorepaymentType(0).subscribe(data => {
-      // this.StorePaymentTypeId = this.GetStorePaymentType.
       console.log(data)
       this.storePaymentTypes = data
     })
   }
-  // getuserid: any = []
-  // GetUserId() {
-  //   this.Auth.getUsersale(1).subscribe(data => {
-  //     console.log(data)
-  //     this.getuserid = data
-  //   })
-  // }
+
+  // print order
+
+  printersettings = { receiptprinter: '' }
+  printhtmlstyle = `
+  <style>
+    #printelement {
+      width: 270px;
+    }
+    .header {
+        text-align: center;
+    }
+    .item-table {
+        width: 100%;
+    }
+    .text-right {
+      text-align: right!important;
+    }
+    .text-left {
+      text-align: left!important;
+    }
+    .text-center {
+      text-align: center!important;
+    }
+    tr.nb, thead.nb {
+        border-top: 0px;
+        border-bottom: 0px;
+    }
+    table, p, h3 {
+      empty-cells: inherit;
+      font-family: Helvetica;
+      font-size: small;
+      width: 290px;
+      padding-left: 0px;
+      border-collapse: collapse;
+    }
+    table, tr, td {
+      border-bottom: 0;
+    }
+    hr {
+      border-top: 1px dashed black;
+    }
+    tr.bt {
+      border-top: 1px dashed black;
+      border-bottom: 0px;
+    }
+    tr {
+      padding-top: -5px;
+    }
+  </style>`
+
+  print(): void {
+    let printContents, popupWin
+    printContents = document.getElementById('demo').innerHTML
+    popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto')
+    popupWin.document.open()
+    popupWin.document.write(`
+    <html>
+      <head>
+        <title>Print tab</title>
+        <style>
+        @media print {
+          app-root > * { display: none; }
+          app-root app-print-layout { display: block; }
+          .header{
+            text-align: center;
+          }
+          th{
+            text-align: left 
+        }
+          body   { font-family: 'Courier New', Courier, monospace; width: 300px }
+          br {
+            display: block; /* makes it have a width */
+            content: ""; /* clears default height */
+            margin-top: 0; /* change this to whatever height you want it */
+          }
+          hr.print{
+            display: block;
+            height: 1px;
+            background: transparent;
+            width: 100%;
+            border: none;
+            border-top: dashed 1px #aaa;
+        } 
+        tr.print
+          {
+            border-bottom: 1px solid #000;;
+          }
+        }
+        </style>
+      </head>
+  <body onload="window.print();window.close()">${printContents}</body>
+    </html>`)
+    popupWin.document.close()
+  }
+  electronPrint() {
+    console.log(this.order, this.Discount)
+    var element = `<div class="header">
+    <p style="text-align: center;font-family: Helvetica;font-size: medium;"><strong>${
+      this.name
+    }</strong></p>
+    <p style="text-align: center;font-family: Helvetica;font-size: small;">
+    ${this.address}, ${this.city},  ${this.phoneNo}<br>
+    GSTIN:${localStorage.getItem('GSTno')}<br>
+    Receipt: ${this.InvoiceNo}<br>
+    ${this.OrderedDateTime}</p>
+    <hr>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 100px;"><strong>ITEM</strong></th>
+                <th><strong>PRICE</strong></th>
+                <th><strong>QTY</strong></th>
+                <th style="text-align: right;padding-right:20px"><strong>AMOUNT</strong></th>
+            </tr>
+        </thead>
+        <tbody>`
+    var Subtotal = 0
+    var disc_tax = 0
+    this.order.Items.forEach(Items => {
+      element =
+        element +
+        `<tr>
+      <td style="width: 100px;">${Items.ProductName}</td>
+      <td>${Items.Price}</td>
+      <td>${Items.OrderQuantity}${Items.ComplementryQty > 0 ? '+' + Items.ComplementryQty : ''}</td>
+      <td style="text-align: right;padding-right:20px">${
+        this.preferences.ShowTaxonBill
+          ? (Items.Price * Items.OrderQuantity).toFixed(2)
+          : (
+              Items.Price *
+              Items.OrderQuantity *
+              (1 + (Items.Tax1 + Items.Tax2 + Items.Tax3) / 100)
+            ).toFixed(2)
+      }</td>
+      </tr>`
+      if (!this.preferences.ShowTaxonBill) {
+        Subtotal =
+          Subtotal +
+          Items.Price * Items.OrderQuantity * (1 + (Items.Tax1 + Items.Tax2 + Items.Tax3) / 100)
+        disc_tax = disc_tax + (this.Discount * (Items.Tax1 + Items.Tax2 + Items.Tax3)) / 100
+      }
+    })
+    element =
+      element +
+      `
+    </tbody>
+    </table>
+    <hr>
+    <table>
+        <tbody>
+            <tr>
+                <td style="width: 100px;"><strong>Subtotal</strong></td>
+                <td></td>
+                <td></td>
+                <td style="text-align: right;padding-right:20px">${
+                  this.preferences.ShowTaxonBill
+                    ? this.order.Subtotal.toFixed(2)
+                    : Subtotal.toFixed(2)
+                }</td>
+            </tr>`
+    // this.AdditionalCharges.forEach(item => {
+    //   element =
+    //     element +
+    //     `<tr">
+    //                             <td style="width: 100px;"><strong>${item.Description}</strong></td>
+    //                             <td></td>
+    //                             <td></td>
+    //                             <td style="text-align: right;padding-right:20px">${item.ChargeAmount.toFixed(
+    //       2,
+    //     )}</td>
+    //                         </tr>`
+    // })
+    if (this.Discount > 0) {
+      element =
+        element +
+        `<tr>
+      <td style="width: 100px;"><strong>Discount</strong></td>
+      <td></td>
+      <td></td>
+      <td style="text-align: right;padding-right:20px">${(this.Discount + disc_tax).toFixed(2)}</td>
+      </tr>`
+    }
+    if (this.order.Tax1 > 0 && this.preferences.ShowTaxonBill) {
+      element =
+        element +
+        `<tr>
+      <td style="width: 100px;"><strong>CGST</strong></td>
+      <td></td>
+      <td></td>
+      <td style="text-align: right;padding-right:20px">${this.order.Tax1.toFixed(2)}</td>
+  </tr>`
+    }
+    if (this.order.Tax2 > 0 && this.preferences.ShowTaxonBill) {
+      element =
+        element +
+        `<tr>
+      <td style="width: 100px;"><strong>SGST</strong></td>
+      <td></td>
+      <td></td>
+      <td style="text-align: right;padding-right:20px">${this.order.Tax2.toFixed(2)}</td>
+  </tr>`
+    }
+
+    element =
+      element +
+      `
+            <tr>
+                <td style="width: 100px;">Paid</td>
+                <td></td>
+                <td></td>
+                <td style="text-align: right;padding-right:20px"><strong>${(+this.order.PaidAmount.toFixed(
+                  0,
+                )).toFixed(2)}</strong></td>
+            </tr>
+            <tr>
+                <td style="width: 100px;">Total</td>
+                <td></td>
+                <td></td>
+                <td style="text-align: right;padding-right:20px"><strong>${(+this.order.BillAmount.toFixed(
+                  0,
+                )).toFixed(2)}</strong></td>
+            </tr>
+            <tr ${+(this.order.BillAmount - this.order.PaidAmount).toFixed(0) == 0 ? 'hidden' : ''}>
+                <td style="width: 100px;">Balance</td>
+                <td></td>
+                <td></td>
+                <td style="text-align: right;padding-right:20px"><strong>${(+(
+                  this.order.BillAmount - this.order.PaidAmount
+                ).toFixed(0)).toFixed(2)}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <p style="text-align: center;font-family: Helvetica;">Thankyou. Visit again.</p>
+</div>
+<style>
+  table{
+    empty-cells: inherit;
+    font-family: Helvetica;
+    font-size: small;
+    width: 290px;
+    padding-left: 0px;
+  }
+  th{
+    text-align: left 
+  }
+  hr{
+    border-top: 1px dashed black
+  }
+  tr.bordered {
+    border-top: 100px solid #000;
+    border-top-color: black;
+  }
+</style>`
+    this.printreceipt()
+  }
+
+  printreceipt() {
+    var printtemplate = `
+    <div id="printelement">
+    <div class="header">
+    <h3>${this.loginfo.name}</h3>
+    <p>
+        ${this.loginfo.store}, ${this.loginfo.address}<br>
+        ${this.loginfo.city}, ${this.loginfo.phoneNo}
+        GSTIN:${this.loginfo.GSTno}<br>
+        Receipt: ${this.order.InvoiceNo}<br>
+        ${this.order.OrderedDateTime}
+        </p>
+    </div>
+    <hr>
+    <div ${this.order.CustomerDetails.PhoneNo ? '' : 'hidden'} class="header">
+        <h3 ${this.order.CustomerDetails.Name ? '' : 'hidden'}>${
+      this.order.CustomerDetails.Name
+    }</h3>
+        <p>${
+          this.order.CustomerDetails.Address ? this.order.CustomerDetails.Address + '<br>' : ''
+        }${this.order.CustomerDetails.City ? this.order.CustomerDetails.City + ',' : ''}${
+      this.order.CustomerDetails.PhoneNo
+    }</p>
+    </div>   
+    <hr> 
+    <table class="item-table">
+        <thead class="nb">
+            <th class="text-left" style="width: 100px;">ITEM</th>
+            <th>PRICE</th>
+            <th>QTY</th>
+            <th class="text-right">AMOUNT</th>
+        </thead>
+        <tr>
+         	<td colspan="4"><hr></td>
+         </tr> 
+        <tbody>`
+    var extra = 0
+    this.order.Items.forEach(item => {
+      printtemplate += `
+      <tr class="nb">
+          <td class="text-left">${item.ProductName}</td>
+          <td>${item.Price}</td>
+          <td>${item.OrderQuantity}${
+        item.ComplementryQty > 0 ? '(' + item.ComplementryQty + ')' : ''
+      }</td>
+          <td class="text-right">${item.OrderQuantity > 0 ? item.TotalAmount.toFixed(2) : 0}</td>
+      </tr>`
+      extra += item.Extra
+    })
+    printtemplate += `
+    <tr class="bt">
+        <td class="text-left"><strong>Sub Total</strong></td>
+        <td colspan="2"></td>
+        <td class="text-right">${this.order.Subtotal}</td>
+    </tr>
+    <tr class="nb" ${this.order.DiscAmount == 0 ? 'hidden' : ''}>
+        <td class="text-left"><strong>Discount</strong></td>
+        <td colspan="2"></td>
+        <td class="text-right">${this.order.DiscAmount.toFixed(2)}</td>
+    </tr>
+    <tr class="nb" ${this.order.Tax1 == 0 ? 'hidden' : ''}>
+        <td class="text-left"><strong>CGST</strong></td>
+        <td colspan="2"></td>
+        <td class="text-right">${this.order.Tax1.toFixed(2)}</td>
+    </tr>
+    <tr class="nb" ${this.order.Tax2 == 0 ? 'hidden' : ''}>
+        <td class="text-left"><strong>SGST</strong></td>
+        <td colspan="2"></td>
+        <td class="text-right">${this.order.Tax2.toFixed(2)}</td>
+    </tr>`
+    // this.AdditionalCharges.forEach(charge => {
+    //   printtemplate += `
+    //       <tr class="nb">
+    //           <td class="text-left"><strong>${charge.Description}</strong></td>
+    //           <td colspan="2"></td>
+    //           <td class="text-right">${charge.ChargeAmount.toFixed(2)}</td>
+    //       </tr>`
+    // })
+    printtemplate += `
+          <tr class="nb" ${extra > 0 ? '' : 'hidden'}>
+              <td class="text-left"><strong>Extra</strong></td>
+              <td colspan="2"></td>
+              <td class="text-right">${(+extra.toFixed(0)).toFixed(2)}</td>
+          </tr>
+          <tr class="nb">
+              <td class="text-left"><strong>Paid</strong></td>
+              <td colspan="2"></td>
+              <td class="text-right">${(+this.order.PaidAmount.toFixed(0)).toFixed(2)}</td>
+          </tr>
+          <tr class="nb">
+              <td class="text-left"><strong>Total</strong></td>
+              <td colspan="2"></td>
+              <td class="text-right">${(+this.order.BillAmount.toFixed(0)).toFixed(2)}</td>
+          </tr>
+          <tr class="nb" ${this.order.BillAmount - this.order.PaidAmount > 0 ? '' : 'hidden'}>
+              <td class="text-left"><strong>Balance</strong></td>
+              <td colspan="2"></td>
+              <td class="text-right">${(+(this.order.BillAmount - this.order.PaidAmount).toFixed(
+                0,
+              )).toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr>
+      <div class="text-center">
+        <p>Powered By Biz1Book.</p>
+      </div>
+    </div>`
+
+    printtemplate += this.printhtmlstyle
+    console.log(printtemplate)
+    if (this.printersettings)
+      this.printservice.print(printtemplate, [this.printersettings.receiptprinter])
+  }
 }

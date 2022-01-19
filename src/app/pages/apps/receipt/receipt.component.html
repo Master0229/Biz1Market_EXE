@@ -129,6 +129,7 @@
                   <td>{{orders.orderStatusId}}</td>
                   <td>
                     {{orders.customerName==null?"-":orders.customerName}}/{{orders.customerPhone==null?"-":orders.customerPhone}}
+
                   </td>
                   <td>{{orders.orderedDateTime | date: 'MMM d, h:mm a'}}</td>
                 </tr>
@@ -146,9 +147,7 @@
           </ng-template>
         </div>
       </div>
-
     </div>
-
   </div>
   <div class="container" *ngIf="show==1">
     <!-- Title -->
@@ -230,7 +229,7 @@
                       <td class="cs" [attr.colspan]="3"><strong>Subtotal</strong><br><br>
                         <span
                           *ngFor="let item of AdditionalCharges"><strong>{{item.Description}}</strong><br><br></span>
-                        <span *ngIf="Discount > 0"><strong>Discount</strong><br><br></span>
+                        <span *ngIf="order.DiscAmount > 0"><strong>Discount</strong><br><br></span>
                         <strong *ngIf="order.Tax1">CGST</strong><br><br>
                         <strong *ngIf="order.Tax2">SGST</strong><br><br>
                         <strong>Total</strong><br><br>
@@ -238,7 +237,7 @@
                       <td class="text-right">{{order.Subtotal| number: ".2" }}<br><br>
                         <!-- <span class="text-right" *ngFor="let item of order.additionalcharge">{{item.ChargeAmount |
                           number:".2" }}<br><br></span> -->
-                        <span class="text-right" *ngIf="Discount > 0">{{Discount | number:
+                        <span class="text-right" *ngIf="order.DiscAmount > 0">{{order.DiscAmount | number:
                           ".2"
                           }}<br><br></span>
                         <span class="text-right" *ngIf="order.Tax1">{{order.Tax1 | number: ".2" }}

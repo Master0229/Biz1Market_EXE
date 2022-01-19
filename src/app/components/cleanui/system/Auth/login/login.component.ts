@@ -4,9 +4,9 @@ import { select, Store } from '@ngrx/store'
 import * as Reducers from 'src/app/store/reducers'
 import * as UserActions from 'src/app/store/user/actions'
 import * as SettingsActions from 'src/app/store/settings/actions'
-import { AuthService } from 'src/app/auth.service';
-import { Router } from '@angular/router';
-import { ConstantsService } from "../../../../../services/constants/constants.service";
+import { AuthService } from 'src/app/auth.service'
+import { Router } from '@angular/router'
+import { ConstantsService } from '../../../../../services/constants/constants.service'
 
 @Component({
   selector: 'cui-system-login',
@@ -18,15 +18,15 @@ export class LoginComponent implements OnInit {
   logo: String
   authProvider: string = 'firebase'
   loading: boolean = false
-  isloggedin: boolean = false;
-  stores = [];
-  companyId = 0;
+  isloggedin: boolean = false
+  stores = []
+  companyId = 0
   constructor(
     private fb: FormBuilder,
     private store: Store<any>,
     private Auth: AuthService,
     private router: Router,
-    private globals: ConstantsService
+    private globals: ConstantsService,
   ) {
     this.form = fb.group({
       EmailId: ['testuser@gmail.com', [Validators.required, Validators.minLength(4)]],
@@ -60,9 +60,9 @@ export class LoginComponent implements OnInit {
 
   submitForm(): void {
     this.globals.listener().subscribe(data => {
-      this.isloggedin = data["loggedin"];
-      this.stores = data["stores"];
-      this.companyId = data["companyId"][0]["companyId"];
+      this.isloggedin = data['loggedin']
+      this.stores = data['stores']
+      this.companyId = data['companyId'][0]['companyId']
       // console.log()
     })
     this.email.markAsDirty()
@@ -94,13 +94,13 @@ export class LoginComponent implements OnInit {
   }
   getusers(id) {
     this.Auth.getusers(id, this.companyId).subscribe(data => {
-      console.log(data);
-      this.Auth.getstoredata(this.companyId,id,1).subscribe(data1 => {
+      console.log(data)
+      this.Auth.getstoredata(this.companyId, id, 1).subscribe(data1 => {
         console.log(data1)
         this.Auth.getstoredatadb(data1).subscribe(d => {})
       })
-      localStorage.setItem("users", JSON.stringify(data));
-      this.router.navigate(['/auth/pinscreen']);
+      localStorage.setItem('users', JSON.stringify(data))
+      this.router.navigate(['/auth/pinscreen'])
     })
   }
 }

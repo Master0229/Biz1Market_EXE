@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { ElectronService } from 'ngx-electron'
 import { AuthService } from 'src/app/auth.service'
+import { NzNotificationService } from 'ng-zorro-antd'
 // import { NzNotificationService } from 'ng-zorro-antd'
 const data: any = require('./data.json')
 
@@ -19,9 +20,11 @@ export class SettingComponent implements OnInit {
   avatar = this.dialogs[this.activeIndex].avatar
   dialogid = 1
   activeKey = 0
-  printers = []
+  // printers = [];
+  printer = ''
+  template = ''
   isloading: boolean = false
-  printersettings: any
+  // printersettings: any;
   count = 0
   total_devices = 0
   checked_devices = 0
@@ -34,14 +37,106 @@ export class SettingComponent implements OnInit {
   isconnectedtoserver: boolean = false
   device_type: string = ''
   datasavetype = '1'
-  constructor(public electronService: ElectronService, private auth: AuthService) {
-    this.count = 1
+  constructor(
+    public electronService: ElectronService,
+    private auth: AuthService,
+    private notification: NzNotificationService,
+    private electronservice: ElectronService,
+  ) {
+    // this.count = 1;
     this.device_type = localStorage.getItem('device_type')
     console.log(this.device_type)
     this.datasavetype = localStorage.getItem('datasavetype')
   }
 
+  printersettings = {}
+
+  printers = [
+    {
+      name: 'OneNote for Windows 10',
+      displayName: 'OneNote for Windows 10',
+      description: '',
+      status: 0,
+      isDefault: false,
+      options: {
+        'printer-location': '',
+        'printer-make-and-model': 'Microsoft Software Printer Driver',
+        system_driverinfo:
+          'Microsoft Software Printer Driver;10.0.19041.630 (WinBuild.160101.0800);Microsoft® Windows® Operating System;10.0.19041.630',
+      },
+    },
+    {
+      name: 'Microsoft XPS Document Writer',
+      displayName: 'Microsoft XPS Document Writer',
+      description: '',
+      status: 0,
+      isDefault: false,
+      options: {
+        'printer-location': '',
+        'printer-make-and-model': 'Microsoft XPS Document Writer v4',
+        system_driverinfo:
+          'Microsoft XPS Document Writer v4;10.0.19041.630 (WinBuild.160101.0800);Microsoft® Windows® Operating System;10.0.19041.630',
+      },
+    },
+    {
+      name: 'Microsoft Print to PDF',
+      displayName: 'Microsoft Print to PDF',
+      description: '',
+      status: 0,
+      isDefault: false,
+      options: {
+        'printer-location': '',
+        'printer-make-and-model': 'Microsoft Print To PDF',
+        system_driverinfo:
+          'Microsoft Print To PDF;10.0.19041.630 (WinBuild.160101.0800);Microsoft® Windows® Operating System;10.0.19041.630',
+      },
+    },
+    {
+      name: 'HP LaserJet Pro MFP M126nw',
+      displayName: 'HP LaserJet Pro MFP M126nw',
+      description: '',
+      status: 0,
+      isDefault: false,
+      options: {
+        'printer-location':
+          'http://[fe80::5eea:1dff:fe36:c39f%25]:3911/eb694e80-27c0-5229-e4ec-d7137e9dff98',
+        'printer-make-and-model': 'Microsoft IPP Class Driver',
+        system_driverinfo:
+          'Microsoft IPP Class Driver;10.0.19041.630 (WinBuild.160101.0800);Microsoft® Windows® Operating System;10.0.19041.630',
+      },
+    },
+    {
+      name: 'Fax',
+      displayName: 'Fax',
+      description: '',
+      status: 0,
+      isDefault: false,
+      options: {
+        'printer-location': '',
+        'printer-make-and-model': 'Microsoft Shared Fax Driver',
+        system_driverinfo:
+          'Microsoft Shared Fax Driver;10.0.19041.508 (WinBuild.160101.0800);Microsoft® Windows® Operating System;10.0.19041.508',
+      },
+    },
+    {
+      name: 'EPSON TM-T82 ReceiptSA4',
+      displayName: 'EPSON TM-T82 ReceiptSA4',
+      description: '',
+      status: 128,
+      isDefault: true,
+      options: {
+        'printer-location': '',
+        'printer-make-and-model': 'EPSON TM-T82 ReceiptSA4',
+        system_driverinfo:
+          'EPSON TM-T82 ReceiptSA4;0, 3, 0, 0 built by: WinDDK;EPSON Advanced Printer Driver;1, 0, 19, 0',
+      },
+    },
+  ]
+
   ngOnInit(): void {
+    this.getprinters()
+    this.getprintersetting()
+
     if (this.electronService.isElectronApp && this.device_type == 'server') {
       console.log(this.device_type)
       var server = this.electronService.remote.getGlobal('database')()
@@ -60,12 +155,15 @@ export class SettingComponent implements OnInit {
     if (serverip && this.device_type == 'client') {
       this.checkifserver(serverip)
     }
-    if (this.electronService.isElectronApp) {
-      console.log(this.electronService.remote.getGlobal('GetPrinters')())
-      this.printers = this.electronService.remote.getGlobal('GetPrinters')()
-    } else {
-      this.printers = [{ name: 'hp printer' }, { name: 'epson printer' }]
-    }
+    // if (this.electronService.isElectronApp) {
+    //   console.log(this.electronService.remote.getGlobal("GetPrinters")())
+    //   this.printers = this.electronService.remote.getGlobal("GetPrinters")();
+    // } else {
+    //   this.printers = [
+    //     { name: "hp printer" },
+    //     { name: "epson printer" }
+    //   ]
+    // }
     console.log(this.printers)
   }
 
@@ -76,13 +174,34 @@ export class SettingComponent implements OnInit {
     this.dialogid = index + 1
   }
 
-  getPrintersettings() {
-    this.printersettings = JSON.parse(localStorage.getItem('printersettings'))
-    console.log(this.printersettings)
+  getprinters() {
+    if (this.electronservice.isElectronApp) {
+      this.printers = this.electronservice.remote.getGlobal('GetPrinters')()
+      console.log(JSON.stringify(this.printers))
+    }
   }
 
-  print(printer) {
-    this.electronService.remote.getGlobal('Print')('this is a test printer', printer)
+  getprintersetting() {
+    this.auth.getdbdata(['printersettings']).subscribe(data => {
+      this.printersettings = data['printersettings'][0] ? data['printersettings'][0] : {}
+      console.log(this.printersettings)
+    })
+  }
+
+  saveprintersettings() {
+    this.auth.updateprintersettings(this.printersettings).subscribe(data => {
+      this.notification.success('Success', 'Printer settings saved')
+      console.log(this.notification)
+    })
+  }
+
+  // getPrintersettings() {
+  //   this.printersettings = JSON.parse(localStorage.getItem("printersettings"));
+  //   console.log(this.printersettings);
+  // }
+
+  print() {
+    this.electronservice.remote.getGlobal('print')(this.count, this.printer, this.template)
   }
 
   changeKey(key) {

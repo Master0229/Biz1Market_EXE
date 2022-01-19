@@ -210,44 +210,29 @@
                             <i class="fe fe-trash"></i>
                         </a>
                     </div> -->
+                    <button type="button" class="btn btn-success pull-right" (click)="saveprintersettings()">Save</button>
+
                 </div>
+
                 <!-- <div class="card-body"> -->
                 <div>
                     <div class="card">
+
                         <!-- <div class="card-header card-header-flex "> -->
                         <!-- <div class="card-body"> -->
                         <nz-table class="kit__utils__table" nzSize="small">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Count</th>
-                                    <th class="ml-5">Action</th>
-                                    <!-- <th>Test</th> -->
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let printer of printers; let i = index;">
-                                    <td>{{i}}</td>
-                                    <td> <a class="btn btn-sm btn-light">{{printer.name}}</a></td>
-                                    <td>
-                                        <!-- <input type="number"class="w-50" nz-input name="" id=""  min="1">  -->
-                                        <nz-button-group [nzSize]="size">
-                                            <button nz-button [nzSize]="size" (click)="count>1&&count = count - 1"
-                                                nzType="link"> <i nz-icon nzType="caret-left"
-                                                    nzTheme="outline"></i></button>
-                                            <span>{{count}}</span>
-                                            <button nz-button [nzSize]="size" nzType="link" (click)="count =count + 1">
-                                                <i nz-icon nzType="caret-right" nzTheme="outline"></i></button>
-                                        </nz-button-group>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" name="" id="">
-                                        <button class="ml-5" nz-button nzType="link" (click)="print(printer.name)"><i
-                                                nz-icon nzType="printer" nzTheme="outline"></i></button>
-                                    </td>
-                                </tr>
-                            </tbody>
+                            <div class="p-4">
+                                <ul class="list-group">
+                                    <a href="javascript:void(0);" (click)="printersettings.receiptprinter = ''"
+                                        [class.active]="printersettings.receiptprinter == ''"
+                                        class="list-group-item-action list-group-item">None</a>
+                                    <a href="javascript:void(0);"
+                                        (click)="printersettings.receiptprinter = printer.name"
+                                        *ngFor="let printer of printers"
+                                        [class.active]="printersettings.receiptprinter == printer.name"
+                                        class="list-group-item-action list-group-item">{{printer.name}}</a>
+                                </ul>
+                            </div>
                         </nz-table>
                         <!-- </div> -->
                         <!-- </div> -->
