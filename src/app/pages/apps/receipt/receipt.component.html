@@ -126,7 +126,10 @@
                     <span *ngIf="orders.OrderStatusId != -1 && orders.BillAmount < orders.PaidAmount"
                       class="badge badge-danger mr-10">Refundable</span>
                   </td>
-                  <td>{{orders.orderStatusId}}</td>
+                  <td><span *ngIf="orders.OrderStatusId == 5">Completed</span>
+                    <span *ngIf="orders.OrderStatusId != -1 && orders.OrderStatusId != 5">Pending</span>
+                    <span *ngIf="orders.OrderStatusId == -1">Cancelled</span>
+                  </td>
                   <td>
                     {{orders.customerName==null?"-":orders.customerName}}/{{orders.customerPhone==null?"-":orders.customerPhone}}
 
@@ -183,7 +186,7 @@
                   <li *ngIf="item.TranstypeId==1">
                     <span class="text-success">₹ {{item.Amount}}
                       /-</span> on {{item.TransDateTime | date: 'MMM d, h:mm a'}} by <span
-                      class="badge badge-success">{{item.Name}}</span>
+                      class="badge badge-success">{{item.StorePaymentTypeName}}</span>
                   </li>
                   <li *ngIf="item.TranstypeId==2">
                     <span class="text-danger">₹
@@ -192,7 +195,6 @@
                   </li>
                 </span>
               </ul>
-
             </div>
 
             <div class="row" *ngIf="OrderStatus != -1&&Total-PaidAmount>0">

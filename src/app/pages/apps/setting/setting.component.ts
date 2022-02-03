@@ -155,15 +155,7 @@ export class SettingComponent implements OnInit {
     if (serverip && this.device_type == 'client') {
       this.checkifserver(serverip)
     }
-    // if (this.electronService.isElectronApp) {
-    //   console.log(this.electronService.remote.getGlobal("GetPrinters")())
-    //   this.printers = this.electronService.remote.getGlobal("GetPrinters")();
-    // } else {
-    //   this.printers = [
-    //     { name: "hp printer" },
-    //     { name: "epson printer" }
-    //   ]
-    // }
+
     console.log(this.printers)
   }
 
@@ -201,7 +193,7 @@ export class SettingComponent implements OnInit {
   // }
 
   print() {
-    this.electronservice.remote.getGlobal('print')(this.count, this.printer, this.template)
+    this.electronservice.remote.getGlobal('testPrint')(this.count, this.printer, this.template)
   }
 
   changeKey(key) {

@@ -25,14 +25,25 @@ export class CustomerComponent implements OnInit {
   p
   filteredcustomer = null
   deleteId
+  loginfo
   constructor(private Auth: AuthService, private modalService: NgbModal) {
-    this.CompanyId = 1
-    this.StoreId = 26
+    // this.CompanyId = 1
+    // this.StoreId = 26
   }
 
-  ngOnInit() {
-    //  this.datService.execute();
-    this.getCustomer()
+  ngOnInit(): void {
+    this.Auth.getdbdata(['loginfo']).subscribe(data => {
+      this.loginfo = data['loginfo'][0]
+      this.CompanyId = this.loginfo.companyId
+      this.StoreId = this.loginfo.storeId
+      console.log(this.loginfo)
+    })
+
+    this.Auth.getloginfo().subscribe(data => {
+      this.loginfo = data
+
+      this.getCustomer()
+    })
   }
 
   getCustomer() {

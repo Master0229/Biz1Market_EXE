@@ -96,9 +96,6 @@ export class ReceiptComponent implements OnInit {
   phone: any
   orderedDate: any
   AdditionalCharges: any = []
-  CGST: number = 0
-  SGST: number = 0
-  IGST: number = 0
   PaidAmount: any
   masterdata = []
 
@@ -120,14 +117,20 @@ export class ReceiptComponent implements OnInit {
     this.Auth.getdbdata(['loginfo', 'printersettings']).subscribe(data => {
       this.loginfo = data['loginfo'][0]
       this.printersettings = data['printersettings'][0]
-      this.CompanyId = this.loginfo.CompanyId
-      this.StoreId = this.loginfo.StoreId
+      this.CompanyId = this.loginfo.companyId
+      this.StoreId = this.loginfo.storeId
       console.log(this.loginfo)
     })
     this.strdate = moment().format('YYYY-MM-DD')
     this.enddate = moment().format('YYYY-MM-DD')
     this.getReceipt()
     this.gettrans()
+
+    this.Auth.getloginfo().subscribe(data => {
+      this.loginfo = data
+
+      this.getReceipt()
+    })
   }
 
   toggle() {
@@ -165,7 +168,7 @@ export class ReceiptComponent implements OnInit {
   }
 
   getReceipt() {
-    this.Auth.GetReceipts((this.StoreId = 26), this.strdate, this.enddate, this.invoice).subscribe(
+    this.Auth.GetReceipts(this.StoreId, this.strdate, this.enddate, this.invoice).subscribe(
       data => {
         this.receipts = data
         this.transactionpayment = 0
@@ -569,7 +572,7 @@ export class ReceiptComponent implements OnInit {
       </table>
       <hr>
       <div class="text-center">
-        <p>Powered By Biz1Book.</p>
+        <p>Powered By BizDom.</p>
       </div>
     </div>`
 

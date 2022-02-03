@@ -1,9 +1,9 @@
-<a nz-dropdown class="dropdown" [nzDropdownMenu]="menu" [nzTrigger]="'click'">
-  <i class="icon fe fe-folder"></i>
-  <span class="d-none d-xl-inline">
-    {{ 'topBar.issuesHistory' | translate }}
-  </span>
-</a>
+<div class="mr-4 d-none d-md-block">
+  <!-- <cui-topbar-issues-history></cui-topbar-issues-history> -->
+  {{ time | date: 'MMM d, y | hh:mm:ss a' }}
+
+
+</div>
 <nz-dropdown-menu #menu="nzDropdownMenu">
   <ul nz-menu>
     <li nz-menu-item>

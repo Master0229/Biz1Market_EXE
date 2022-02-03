@@ -5,4 +5,12 @@ import { Component } from '@angular/core'
   templateUrl: './issues-history.component.html',
   styleUrls: ['./issues-history.component.scss'],
 })
-export class TopbarIssuesHistoryComponent {}
+export class TopbarIssuesHistoryComponent {
+  time = new Date()
+
+  ngOnInit() {
+    setInterval(() => {
+      this.time = new Date()
+    }, 1000)
+  }
+}

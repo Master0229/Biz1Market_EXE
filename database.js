@@ -6,6 +6,8 @@ var Datastore = require('nedb')
 // db.orderkey = new Datastore({ filename: './database/orderkey.db', autoload: true });
 db.pendingordersdb = new Datastore({ filename: './database/pendingorders.db', autoload: true });
 db.printersettings = new Datastore({ filename: './database/printersettings.db', autoload: true });
+db.paymenttypes = new Datastore({ filename: './database/paymenttypes.db', autoload: true });
+
 
 db.transactionsdb = new Datastore({ filename: './database/transactions.db', autoload: true });
 db.transactionlogsdb = new Datastore({ filename: './database/transactionlogs.db', autoload: true });

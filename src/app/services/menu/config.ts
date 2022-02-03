@@ -33,12 +33,12 @@ export const getMenuData: any[] = [
   //   key: 'appsBatchEntry',
   //   url: '/apps/batchentry',
   // },
-  {
-    title: 'Stock Entry',
-    icon: 'fa fa-th-large',
-    key: 'appsStockEntry',
-    url: '/apps/stockentry',
-  },
+  // {
+  //   title: 'Stock Entry',
+  //   icon: 'fa fa-th-large',
+  //   key: 'appsStockEntry',
+  //   url: '/apps/stockentry',
+  // },
   {
     title: 'Customers',
     key: 'appsSetting',
@@ -252,12 +252,12 @@ export const getMenuData: any[] = [
   //   key: 'extraAppsWordpressAdd',
   //   url: '/apps/wordpress-add',
   // },
-  // {
-  //   title: 'About Us',
-  //   icon: 'fe fe-alert-octagon',
-  //   key: 'extraAppsHelpdeskDashboard',
-  //   url: '/apps/helpdesk-dashboard',
-  // },
+  {
+    title: 'About Us',
+    icon: 'fe fe-alert-octagon',
+    key: 'extraAppsHelpdeskDashboard',
+    url: '/apps/helpdesk-dashboard',
+  },
   {
     // title: 'Setup',
     // key: 'apps',
