@@ -33,24 +33,24 @@ export const getMenuData: any[] = [
   //   key: 'appsBatchEntry',
   //   url: '/apps/batchentry',
   // },
-  {
-    title: 'Stock Entry',
-    icon: 'fa fa-th-large',
-    key: 'appsStockEntry',
-    url: '/apps/stockentry',
-  },
+  // {
+  //   title: 'Stock Entry',
+  //   icon: 'fa fa-th-large',
+  //   key: 'appsStockEntry',
+  //   url: '/apps/stockentry',
+  // },
   {
     title: 'Customers',
     key: 'appsSetting',
     icon: 'fe fe-users',
     url: '/apps/customer',
   },
-  {
-    title: 'Internal Transfer',
-    key: 'appsInternalTransfer',
-    icon: 'fa fa-code-fork',
-    url: '/apps/internaltransfer',
-  },
+  // {
+  //   title: 'Internal Transfer',
+  //   key: 'appsInternalTransfer',
+  //   icon: 'fa fa-code-fork',
+  //   url: '/apps/internaltransfer',
+  // },
   {
     title: 'Setting',
     key: 'appsSetting',
@@ -252,12 +252,12 @@ export const getMenuData: any[] = [
   //   key: 'extraAppsWordpressAdd',
   //   url: '/apps/wordpress-add',
   // },
-  // {
-  //   title: 'About Us',
-  //   icon: 'fe fe-alert-octagon',
-  //   key: 'extraAppsHelpdeskDashboard',
-  //   url: '/apps/helpdesk-dashboard',
-  // },
+  {
+    title: 'About Us',
+    icon: 'fe fe-alert-octagon',
+    key: 'extraAppsHelpdeskDashboard',
+    url: '/apps/helpdesk-dashboard',
+  },
   {
     // title: 'Setup',
     // key: 'apps',
@@ -268,7 +268,6 @@ export const getMenuData: any[] = [
     //     key: 'appsaddproduct',
     //     url: '/apps/addproduct',
     //   },
-
     //   // {
     //   //   title: 'StockEntry',
     //   //   key: 'appsStockEntry',
@@ -284,7 +283,6 @@ export const getMenuData: any[] = [
     //   //   key: 'appsProductOptions',
     //   //   url: '/apps/productoptions',
     //   // },
-
     // ],
   },
   // {
@@ -292,8 +290,6 @@ export const getMenuData: any[] = [
   //   key: 'apps',
   //   icon: 'fe fe-database',
   //   children: [
-
-
 
   //     {
   //       title: 'Profile',
@@ -588,33 +584,33 @@ export const getMenuData: any[] = [
   //     },
   //   ],
   // },
-  {
-    title: 'Icons',
-    key: 'icons',
-    icon: 'fe fe-star',
-    children: [
-      {
-        title: 'Feather Icons',
-        key: 'iconsFeatherIcons',
-        url: '/icons/feather-icons',
-      },
-      {
-        title: 'Fontawesome',
-        key: 'iconsFontawesome',
-        url: '/icons/fontawesome',
-      },
-      {
-        title: 'Linearicons Free',
-        key: 'iconsLineariconsFree',
-        url: '/icons/linearicons-free',
-      },
-      {
-        title: 'Icomoon Free',
-        key: 'iconsIcomoonFree',
-        url: '/icons/icomoon-free',
-      },
-    ],
-  },
+  // {
+  //   title: 'Icons',
+  //   key: 'icons',
+  //   icon: 'fe fe-star',
+  //   children: [
+  //     {
+  //       title: 'Feather Icons',
+  //       key: 'iconsFeatherIcons',
+  //       url: '/icons/feather-icons',
+  //     },
+  //     {
+  //       title: 'Fontawesome',
+  //       key: 'iconsFontawesome',
+  //       url: '/icons/fontawesome',
+  //     },
+  //     {
+  //       title: 'Linearicons Free',
+  //       key: 'iconsLineariconsFree',
+  //       url: '/icons/linearicons-free',
+  //     },
+  //     {
+  //       title: 'Icomoon Free',
+  //       key: 'iconsIcomoonFree',
+  //       url: '/icons/icomoon-free',
+  //     },
+  //   ],
+  // },
   // {
   //   category: true,
   //   title: 'Advanced',
@@ -699,5 +695,4 @@ export const getMenuData: any[] = [
   //   icon: 'fe fe-slash',
   //   disabled: true,
   // },
-
 ]

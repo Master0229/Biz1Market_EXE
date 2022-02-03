@@ -25,19 +25,25 @@ export class CustomerComponent implements OnInit {
   p
   filteredcustomer = null
   deleteId
+  loginfo
   constructor(private Auth: AuthService, private modalService: NgbModal) {
-    // var userinfo = localStorage.getItem("userinfo");
-    // var userinfoObj = JSON.parse(userinfo);
-    // console.log(userinfoObj)
-    // this.CompanyId = userinfoObj[0].CompanyId;
-    // var logInfo = JSON.parse(localStorage.getItem("logInfo"));
-    this.CompanyId = 1
-    this.StoreId = 26
+    // this.CompanyId = 1
+    // this.StoreId = 26
   }
 
-  ngOnInit() {
-    //  this.datService.execute();
-    this.getCustomer()
+  ngOnInit(): void {
+    this.Auth.getdbdata(['loginfo']).subscribe(data => {
+      this.loginfo = data['loginfo'][0]
+      this.CompanyId = this.loginfo.companyId
+      this.StoreId = this.loginfo.storeId
+      console.log(this.loginfo)
+    })
+
+    this.Auth.getloginfo().subscribe(data => {
+      this.loginfo = data
+
+      this.getCustomer()
+    })
   }
 
   getCustomer() {
@@ -50,17 +56,16 @@ export class CustomerComponent implements OnInit {
     })
   }
 
-  setcustomerdetail(Id) {
-    this.filteredcustomer = Object.assign({}, this.Customer.filter(x => x.Id == Id)[0])
+  setcustomerdetail(id) {
+    this.filteredcustomer = Object.assign({}, this.Customer.filter(x => x.id == id)[0])
   }
 
-  savecustomer(input) {
+  savecustomer(Input) {
     this.filteredcustomer.ModifiedDate = moment()
     var data = { data: JSON.stringify(this.filteredcustomer) }
-    this.Auth.UpdateCustomer(data).subscribe(data => {
+    this.Auth.UpdateCustomer(this.filteredcustomer).subscribe(data => {
       var response: any = data
       if (response.status == 0) {
-        // console.log(dangertoast(response.msg));
         this.getCustomer()
       } else {
         this.getCustomer()
@@ -102,7 +107,7 @@ export class CustomerComponent implements OnInit {
       this.Customer = this.masterdata.filter(
         x =>
           x.Name?.toLowerCase().includes(this.term.toLowerCase()) ||
-          x.PhoneNo?.toLowerCase().includes(this.term.toLowerCase()),
+          x.invoiceNo?.toLowerCase().includes(this.term.toLowerCase()),
       )
       // console.log(this.masterdata[0])
       // console.log(this.masterdata[0].Name.toLowerCase())

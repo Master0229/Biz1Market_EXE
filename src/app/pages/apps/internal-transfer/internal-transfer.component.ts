@@ -692,14 +692,3 @@ export class InternalTransferComponent implements OnInit {
       )
   }
 }
-
-//  <div class="modal-body" >
-// <div class="card lesson-border">
-//   <div class="card-body">
-//     <p class="card-text"  *ngFor="let ord of OrdData.order"><b>products: </b>{{ord.name}}</p>
-//   </div>
-// </div>
-// </div>
-// <div class="modal-footer">
-// <button type="button" class="btn btn-outline-dark" >Close</button>
-// </div>

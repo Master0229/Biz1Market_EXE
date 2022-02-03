@@ -4,6 +4,9 @@ import { NgModule, LOCALE_ID } from '@angular/core'
 import { TranslateModule } from '@ngx-translate/core'
 import { FormsModule } from '@angular/forms'
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
+import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material'
+
+import { JwtInterceptor } from './services/interceptors/jwt.interceptors'
 
 import { NgProgressModule } from '@ngx-progressbar/core'
 import { NgProgressRouterModule } from '@ngx-progressbar/router'
@@ -11,7 +14,7 @@ import { NgProgressHttpModule } from '@ngx-progressbar/http'
 import { AngularFireModule } from '@angular/fire'
 import { AngularFireAuthModule } from '@angular/fire/auth'
 import { AngularFirestoreModule, SETTINGS } from '@angular/fire/firestore'
-import { Ng2SearchPipeModule } from 'ng2-search-filter';
+import { Ng2SearchPipeModule } from 'ng2-search-filter'
 
 import { AppRoutingModule } from './app-routing.module'
 import { AppComponent } from './app.component'
@@ -23,12 +26,12 @@ import { UserEffects } from './store/user/effects'
 import { firebaseConfig, firebaseAuthService } from './services/firebase'
 import { jwtAuthService } from './services/jwt'
 import { MockHttpCallInterceptor } from './services/fakeApi'
-import { ElectronService, NgxElectronModule } from 'ngx-electron';
+import { ElectronService, NgxElectronModule } from 'ngx-electron'
 
 // locale resistration
 import { registerLocaleData } from '@angular/common'
 import { default as localeEn } from '@angular/common/locales/en'
-import { NZ_I18N, en_US as localeZorro } from 'ng-zorro-antd';
+import { NZ_I18N, en_US as localeZorro } from 'ng-zorro-antd'
 const LOCALE_PROVIDERS = [
   { provide: LOCALE_ID, useValue: 'en' },
   { provide: NZ_I18N, useValue: localeZorro },
@@ -47,6 +50,7 @@ registerLocaleData(localeEn, 'en')
     Ng2SearchPipeModule,
     // translate
     TranslateModule.forRoot(),
+    NgxDaterangepickerMd.forRoot(),
 
     // ngrx
     StoreModule.forRoot(reducers, { metaReducers }),
@@ -84,6 +88,7 @@ registerLocaleData(localeEn, 'en')
 
     // firestore settings
     { provide: SETTINGS, useValue: {} },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })
